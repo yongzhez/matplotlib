@@ -298,6 +298,26 @@ def test_colorbar_ticks():
     assert len(cbar.ax.xaxis.get_ticklocs()) == len(clevs)
 
 
+@cleanup
+def test_colorbar_get_ticks():
+    # test feature for #5792
+    plt.figure()
+    data = np.arange(1200).reshape(30, 40)
+
+    plt.subplot()
+    plt.contourf(data)
+
+    userTicks = plt.colorbar(use_gridspec=True, ticks=[0, 600, 1200])
+    assert userTicks.get_ticks().tolist() == [0, 600, 1200]
+
+    defTicks = plt.colorbar(use_gridspec=True, orientation='horizontal')
+    assert defTicks.get_ticks().tolist() == [0.0, 150.0, 300.0, 450.0, 600.0,
+                                             750.0, 900.0, 1050.0, 1200.0]
+
+    userTicks.set_ticks([600, 700, 800])
+    assert userTicks.get_ticks().tolist() == [600, 700, 800]
+
+
 if __name__ == '__main__':
     import nose
     nose.runmodule(argv=['-s', '--with-doctest'], exit=False)
